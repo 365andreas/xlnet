@@ -814,8 +814,7 @@ def main(_):
         drop_remainder=False)
 
     predict_results = []
-    with tf.gfile.Open(os.path.join(predict_dir, "{}.tsv".format(
-        task_name)), "w") as fout:
+    with tf.gfile.Open(predict_dir) as fout:
       fout.write("index\tprediction\n")
 
       for pred_cnt, result in enumerate(estimator.predict(
