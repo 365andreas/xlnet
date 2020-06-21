@@ -69,6 +69,8 @@ flags.DEFINE_string("model_dir", default="",
       help="Directory for saving the finetuned model.")
 flags.DEFINE_string("data_dir", default="",
       help="Directory for input data.")
+flags.DEFINE_string("test_dir", default="",
+      help="Directory for test data.")
 
 # TPUs and machines
 flags.DEFINE_bool("use_tpu", default=False, help="whether to use TPU.")
@@ -301,10 +303,10 @@ class ImdbProcessor(DataProcessor):
     return [0, 1]
 
   def get_train_examples(self, data_dir):
-    return self._create_examples(os.path.join(data_dir, "train"))
+    return self._create_examples(data_dir)
 
-  def get_dev_examples(self, data_dir):
-    return self._create_examples(os.path.join(data_dir, "test"))
+  def get_dev_examples(self, test_dir):
+    return self._create_examples(test_dir)
 
   def _create_examples(self, data_dir):
     examples = []
