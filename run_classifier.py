@@ -344,7 +344,7 @@ class ImdbProcessor(DataProcessor):
     data = data.dropna()
 
     for _, row in data.iterrows():
-        examples.append(InputExample(guid="unused_id", text_a=row['Sentence'], text_b=None))
+        examples.append(InputExample(guid="unused_id", text_a=row['Sentence'], text_b=None, label=0))
     return examples
 
 class MnliMatchedProcessor(GLUEProcessor):
