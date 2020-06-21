@@ -29,6 +29,7 @@ from classifier_utils import convert_single_example
 from prepro_utils import preprocess_text, encode_ids
 
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 # Model
 flags.DEFINE_string("model_config_path", default=None,
@@ -305,8 +306,8 @@ class ImdbProcessor(DataProcessor):
   def get_train_examples(self, data_dir):
     return self._create_examples(data_dir)
 
-  def get_dev_examples(self, test_dir):
-    return self._create_examples(test_dir)
+  def get_dev_examples(self, data_dir):
+    return self._create_eval_examples(data_dir)
 
   def _create_examples(self, data_dir):
     examples = []
@@ -314,12 +315,24 @@ class ImdbProcessor(DataProcessor):
     data = pd.read_csv(data_dir, header=None,  index_col=0)
     data.columns=["Label", "Sentence"]
     data = data.dropna()
-    
+    data, _ = train_test_split(data, test_size=0.1, random_state=7)
+
     for _, row in data.iterrows():
         examples.append(InputExample(guid="unused_id", text_a=row['Sentence'], text_b=None, label=row['Label']))
     return examples
+  
+  def _create_eval_examples(self, data_dir):
+    examples = []
 
+    data = pd.read_csv(data_dir, header=None,  index_col=0)
+    data.columns=["Label", "Sentence"]
+    data = data.dropna()
+    _, data = train_test_split(data, test_size=0.1, random_state=7)
 
+    for _, row in data.iterrows():
+        examples.append(InputExample(guid="unused_id", text_a=row['Sentence'], text_b=None, label=row['Label']))
+    return examples
+  
 class MnliMatchedProcessor(GLUEProcessor):
   def __init__(self):
     super(MnliMatchedProcessor, self).__init__()
