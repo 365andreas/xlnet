@@ -315,7 +315,7 @@ class ImdbProcessor(DataProcessor):
     data.columns=["Label", "Sentence"]
     data = data.dropna()
     
-    for _, row in df.iterrows():
+    for _, row in data.iterrows():
         examples.append(InputExample(guid="unused_id", text_a=row['Sentence'], text_b=None, label=row['Label']))
     return examples
 
