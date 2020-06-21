@@ -309,6 +309,9 @@ class ImdbProcessor(DataProcessor):
   def get_dev_examples(self, data_dir):
     return self._create_eval_examples(data_dir)
 
+  def get_test_examples(self, data_dir):
+    return self._test_create_examples(data_dir)
+
   def _create_examples(self, data_dir):
     examples = []
 
@@ -333,6 +336,17 @@ class ImdbProcessor(DataProcessor):
         examples.append(InputExample(guid="unused_id", text_a=row['Sentence'], text_b=None, label=row['Label']))
     return examples
   
+ def _test_create_examples(self, data_dir):
+    examples = []
+
+    data = pd.read_csv(data_dir, header=None,  index_col=0)
+    data.columns=["Sentence"]
+    data = data.dropna()
+
+    for _, row in data.iterrows():
+        examples.append(InputExample(guid="unused_id", text_a=row['Sentence'], text_b=None))
+    return examples
+
 class MnliMatchedProcessor(GLUEProcessor):
   def __init__(self):
     super(MnliMatchedProcessor, self).__init__()
@@ -735,7 +749,7 @@ def main(_):
     if FLAGS.eval_split == "dev":
       eval_examples = processor.get_dev_examples(FLAGS.data_dir)
     else:
-      eval_examples = processor.get_test_examples(FLAGS.data_dir)
+      eval_examples = processor.get_test_examples(FLAGS.test_dir)
 
     tf.logging.info("Num of eval samples: {}".format(len(eval_examples)))
 
@@ -811,9 +825,7 @@ def main(_):
       log_str += "{} {} | ".format(key, val)
     tf.logging.info(log_str)
 
-  tf.logging.info("BEFORE PREDICT !!!!!!!!!!!!!!! Num of eval samples: {}".format(len(eval_examples)))
   if FLAGS.do_predict:
-    tf.logging.info("INSIDE DO PREDICT")
     eval_file_base = "{}.len-{}.{}.predict.tf_record".format(
         spm_basename, FLAGS.max_seq_length, FLAGS.eval_split)
     eval_file = os.path.join(FLAGS.output_dir, eval_file_base)
