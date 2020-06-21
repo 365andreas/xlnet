@@ -811,7 +811,9 @@ def main(_):
       log_str += "{} {} | ".format(key, val)
     tf.logging.info(log_str)
 
+  tf.logging.info("BEFORE PREDICT !!!!!!!!!!!!!!! Num of eval samples: {}".format(len(eval_examples)))
   if FLAGS.do_predict:
+    tf.logging.info("INSIDE DO PREDICT")
     eval_file_base = "{}.len-{}.{}.predict.tf_record".format(
         spm_basename, FLAGS.max_seq_length, FLAGS.eval_split)
     eval_file = os.path.join(FLAGS.output_dir, eval_file_base)
